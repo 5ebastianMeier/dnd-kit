@@ -56,14 +56,24 @@ export function SortableContext({
   const containerId = useUniqueId(ID_PREFIX, id);
   const useDragOverlay = Boolean(dragOverlay.rect !== null);
   const currentPlaceholderId = over?.placeholderId.current;
+  // const isPlaceholderActive = over?.placeholderContainerId.current ===
+  // const currentPlaceholderContainerId = over?.placeholderContainerId.current;
   const items = useMemo(() => {
     const userDefinedIds = userDefinedItems.map((item) =>
       typeof item === 'string' ? item : item.id
     );
-    if (!currentPlaceholderId) {
-      return userDefinedIds;
+    // if (
+    //   currentPlaceholderId &&
+    //   active &&
+    //   currentPlaceholderContainerId ===
+    //     active?.data.current?.sortable.containerId
+    // ) {
+    //   return [...userDefinedIds, currentPlaceholderId];
+    // }
+    if (currentPlaceholderId) {
+      return [...userDefinedIds, currentPlaceholderId];
     }
-    return [...userDefinedIds, currentPlaceholderId];
+    return userDefinedIds;
   }, [currentPlaceholderId, userDefinedItems]);
   // const sortingId = currentPlaceholderId ?? active?.id ?? '';
   const activeIndex = active ? items.indexOf(active.id) : -1;

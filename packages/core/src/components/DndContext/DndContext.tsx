@@ -544,6 +544,7 @@ export const DndContext = memo(function DndContext({
               data: overContainer.data,
               disabled: overContainer.disabled,
               placeholderId: overContainer.placeholderDraggableId,
+              placeholderContainerId: overContainer.placeholderContainerId,
             }
           : null;
       const event: DragOverEvent = {
@@ -555,7 +556,7 @@ export const DndContext = memo(function DndContext({
         },
         over,
       };
-
+      console.log('setover', over);
       unstable_batchedUpdates(() => {
         setOver(over);
         setMonitorState({type: Action.DragOver, event});

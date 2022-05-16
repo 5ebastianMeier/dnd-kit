@@ -461,6 +461,7 @@ export function MultipleContainersCopy({
         >
           {containers.map((containerId) => {
             const containerPlaceholderId = `${containerId}-${placeholderId}`;
+            const sortableId = `sortable-${containerId}`;
             return (
               <DroppableContainer
                 key={containerId}
@@ -475,7 +476,7 @@ export function MultipleContainersCopy({
                 placeholderId={containerPlaceholderId}
               >
                 <SortableContext
-                  id={`sortable-${containerId}`}
+                  id={sortableId}
                   items={items[containerId]}
                   strategy={strategy}
                 >
@@ -483,7 +484,7 @@ export function MultipleContainersCopy({
                     return (
                       <SortableItem
                         placeholderId={containerPlaceholderId}
-                        placeholderContainerId={`sortable-${containerId}`}
+                        placeholderContainerId={sortableId}
                         disabled={isSortingContainer}
                         key={value}
                         id={value}
@@ -501,7 +502,7 @@ export function MultipleContainersCopy({
                     <PlaceholderItem
                       id={containerPlaceholderId}
                       placeholderId={containerPlaceholderId}
-                      placeholderContainerId={`sortable-${containerId}`}
+                      placeholderContainerId={sortableId}
                       disabled={isSortingContainer}
                       key={containerPlaceholderId}
                       index={items[containerId].length}

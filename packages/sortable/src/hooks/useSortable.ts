@@ -81,6 +81,7 @@ export function useSortable({
       ...resizeObserverConfig,
     },
     placeholderDraggableId: placeholderId,
+    placeholderContainerId,
   });
   const {
     active,
@@ -106,7 +107,8 @@ export function useSortable({
   const setNodeRef = useCombinedRefs(setDroppableNodeRef, setDraggableNodeRef);
   const isSorting = Boolean(active);
   // const activeIndexUsed = activeIndex;
-  const activeIndexUsed = activeIndex === -1 ? placeholderIndex : activeIndex;
+  const activeIndexUsed =
+    placeholderIndex !== -1 ? placeholderIndex : activeIndex;
   const displaceItem =
     isSorting &&
     !disableTransforms &&

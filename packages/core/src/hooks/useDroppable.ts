@@ -29,6 +29,7 @@ export interface UseDroppableArguments {
   data?: Data;
   resizeObserverConfig?: ResizeObserverConfig;
   placeholderDraggableId?: UniqueIdentifier;
+  placeholderContainerId?: UniqueIdentifier;
 }
 
 const ID_PREFIX = 'Droppable';
@@ -43,6 +44,7 @@ export function useDroppable({
   id,
   resizeObserverConfig,
   placeholderDraggableId,
+  placeholderContainerId,
 }: UseDroppableArguments) {
   const key = useUniqueId(ID_PREFIX);
   const {active, dispatch, over, measureDroppableContainers} = useContext(
@@ -108,6 +110,7 @@ export function useDroppable({
   const [nodeRef, setNodeRef] = useNodeRef(handleNodeChange);
   const dataRef = useLatestValue(data);
   const placeholderDraggableIdRef = useLatestValue(placeholderDraggableId);
+  const placeholderContainerIdRef = useLatestValue(placeholderContainerId);
 
   useEffect(() => {
     if (!resizeObserver || !nodeRef.current) {
@@ -131,6 +134,7 @@ export function useDroppable({
           rect,
           data: dataRef,
           placeholderDraggableId: placeholderDraggableIdRef,
+          placeholderContainerId: placeholderContainerIdRef,
         },
       });
 

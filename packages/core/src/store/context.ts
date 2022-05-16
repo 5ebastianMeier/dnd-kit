@@ -39,7 +39,6 @@ export const defaultInternalContext: InternalContextDescriptor = {
   },
   dispatch: noop,
   draggableNodes: {},
-  placeholders: {},
   over: null,
   measureDroppableContainers: noop,
 };

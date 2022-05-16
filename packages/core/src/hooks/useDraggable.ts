@@ -61,7 +61,10 @@ export function useDraggable({
   } = useContext(InternalContext);
   const {role = defaultRole, roleDescription = 'draggable', tabIndex = 0} =
     attributes ?? {};
-  const isDragging = active?.id === id;
+  // const isDragging = active?.id === id;
+  const isDragging = placeholder
+    ? over?.id === placeholderContainerId
+    : active?.id === id;
   const transform: Transform | null = useContext(
     isDragging ? ActiveDraggableContext : NullContext
   );
@@ -88,7 +91,7 @@ export function useDraggable({
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [draggableNodes, id, placeholderContainerId]
+    [draggableNodes, id]
   );
 
   const memoizedAttributes: DraggableAttributes = useMemo(
@@ -108,7 +111,7 @@ export function useDraggable({
     activeNodeRect,
     attributes: memoizedAttributes,
     isDragging,
-    isPlaceholderActive: placeholder && over?.id === placeholderContainerId,
+    // isPlaceholderActive: placeholder && over?.id === placeholderContainerId,
     listeners: disabled ? undefined : listeners,
     node,
     over,
