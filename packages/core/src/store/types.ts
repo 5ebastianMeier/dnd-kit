@@ -42,7 +42,7 @@ export interface Over {
   rect: ClientRect;
   disabled: boolean;
   data: DataRef;
-  placeholderId?: UniqueIdentifier;
+  placeholderId: MutableRefObject<UniqueIdentifier | undefined>;
 }
 
 export type DraggableNode = {

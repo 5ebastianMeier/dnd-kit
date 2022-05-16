@@ -53,13 +53,15 @@ export function SortableContext({
   } = useDndContext();
   const containerId = useUniqueId(ID_PREFIX, id);
   const useDragOverlay = Boolean(dragOverlay.rect !== null);
-  const items = useMemo(
-    () =>
-      userDefinedItems.map((item) =>
-        typeof item === 'string' ? item : item.id
-      ),
-    [userDefinedItems]
-  );
+  const currentPlaceholderId = over?.placeholderId.current;
+  const items = useMemo(() => {
+    const userDefinedIds = userDefinedItems.map((item) =>
+      typeof item === 'string' ? item : item.id
+    );
+    return currentPlaceholderId
+      ? [...userDefinedIds, currentPlaceholderId]
+      : userDefinedIds;
+  }, [currentPlaceholderId, userDefinedItems]);
   const activeIndex = active ? items.indexOf(active.id) : -1;
   const overIndex = over ? items.indexOf(over.id) : -1;
   const previousItemsRef = useRef(items);
@@ -113,4 +115,3 @@ function isEqual(arr1: string[], arr2: string[]) {
   }
   return true;
 }
-

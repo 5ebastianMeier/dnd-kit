@@ -32,6 +32,8 @@ export interface Arguments
   getNewIndex?: NewIndexGetter;
   strategy?: SortingStrategy;
   transition?: SortableTransition | null;
+  placeholder?: boolean;
+  placeholderContainerId?: string;
 }
 
 export function useSortable({
@@ -44,6 +46,8 @@ export function useSortable({
   strategy: localStrategy,
   resizeObserverConfig,
   transition = defaultTransition,
+  placeholder = false,
+  placeholderContainerId,
 }: Arguments) {
   const {
     items,
@@ -90,6 +94,8 @@ export function useSortable({
       ...userDefinedAttributes,
     },
     disabled,
+    placeholder,
+    placeholderContainerId,
   });
   const setNodeRef = useCombinedRefs(setDroppableNodeRef, setDraggableNodeRef);
   const isSorting = Boolean(active);

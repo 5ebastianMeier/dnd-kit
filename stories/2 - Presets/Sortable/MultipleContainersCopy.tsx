@@ -137,14 +137,14 @@ interface Props {
   trashable?: boolean;
   scrollable?: boolean;
   vertical?: boolean;
-  dynamicPlaceholder?: boolean;
+  placeholder?: boolean;
 }
 
 export const TRASH_ID = 'void';
 const PLACEHOLDER_ID = 'placeholder';
 const empty: UniqueIdentifier[] = [];
 
-export function MultipleContainers({
+export function MultipleContainersCopy({
   adjustScale = false,
   itemCount = 3,
   cancelDrop,
@@ -162,7 +162,7 @@ export function MultipleContainers({
   trashable = false,
   vertical = false,
   scrollable,
-  dynamicPlaceholder = false,
+  placeholder = false,
 }: Props) {
   const [items, setItems] = useState<Items>(
     () =>
@@ -315,7 +315,8 @@ export function MultipleContainers({
         setActiveId(active.id);
         setClonedItems(items);
       }}
-      onDragOver={({active, over}) => {
+      onDragOver={({active, over}) => {}}
+      onDragEnd={({active, over}) => {
         const overId = over?.id;
 
         if (!overId || overId === TRASH_ID || active.id in items) {
@@ -371,8 +372,6 @@ export function MultipleContainers({
             };
           });
         }
-      }}
-      onDragEnd={({active, over}) => {
         if (active.id in items && over?.id) {
           setContainers((containers) => {
             const activeIndex = containers.indexOf(active.id);
@@ -382,14 +381,10 @@ export function MultipleContainers({
           });
         }
 
-        const activeContainer = findContainer(active.id);
-
         if (!activeContainer) {
           setActiveId(null);
           return;
         }
-
-        const overId = over?.id;
 
         if (!overId) {
           setActiveId(null);
@@ -423,8 +418,6 @@ export function MultipleContainers({
           });
           return;
         }
-
-        const overContainer = findContainer(overId);
 
         if (overContainer) {
           const activeIndex = items[activeContainer].indexOf(active.id);
@@ -476,7 +469,11 @@ export function MultipleContainers({
               unstyled={minimal}
               onRemove={() => handleRemove(containerId)}
             >
-              <SortableContext items={items[containerId]} strategy={strategy}>
+              <SortableContext
+                id={`sortable-${containerId}`}
+                items={items[containerId]}
+                strategy={strategy}
+              >
                 {items[containerId].map((value, index) => {
                   return (
                     <SortableItem
@@ -493,6 +490,21 @@ export function MultipleContainers({
                     />
                   );
                 })}
+                {placeholder && (
+                  <PlaceholderItem
+                    id={placeholderId}
+                    placeholderContainerId={`sortable-${containerId}`}
+                    disabled={isSortingContainer}
+                    key={placeholderId}
+                    index={items[containerId].length}
+                    handle={handle}
+                    style={getItemStyles}
+                    wrapperStyle={wrapperStyle}
+                    renderItem={renderItem}
+                    containerId={containerId}
+                    getIndex={getIndex}
+                  />
+                )}
                 {/* <div
                   ref={setNodeRef}
                   {...attributes}
@@ -630,6 +642,10 @@ function getColor(id: string) {
   return undefined;
 }
 
+function PlaceholderItem(props: SortableItemProps) {
+  return <SortableItem placeholder {...props} />;
+}
+
 function Trash({id}: {id: UniqueIdentifier}) {
   const {setNodeRef, isOver} = useDroppable({
     id,
@@ -668,6 +684,8 @@ interface SortableItemProps {
   getIndex(id: string): number;
   renderItem(): React.ReactElement;
   wrapperStyle({index}: {index: number}): React.CSSProperties;
+  placeholder?: boolean;
+  placeholderContainerId?: string;
 }
 
 function SortableItem({
@@ -680,6 +698,8 @@ function SortableItem({
   containerId,
   getIndex,
   wrapperStyle,
+  placeholder = false,
+  placeholderContainerId,
 }: SortableItemProps) {
   const {
     setNodeRef,
@@ -692,9 +712,18 @@ function SortableItem({
     transition,
   } = useSortable({
     id,
+    placeholder,
+    placeholderContainerId,
   });
   const mounted = useMountStatus();
   const mountedWhileDragging = isDragging && !mounted;
+
+  const isPlaceholderActive =
+    placeholder &&
+    over?.data.current?.sortable?.containerId === placeholderContainerId;
+  if (placeholder && !isPlaceholderActive) {
+    return null;
+  }
 
   return (
     <Item
