@@ -720,6 +720,7 @@ function SortableItem({
     isDragging,
     isSorting,
     over,
+    active,
     overIndex,
     transform,
     transition,
@@ -732,11 +733,15 @@ function SortableItem({
   console.log('render SortableItem', id, transform, transition);
   const mounted = useMountStatus();
   const mountedWhileDragging = isDragging && !mounted;
-
+  const isSourceSortable =
+    active?.data?.current?.sortable.containerId === placeholderContainerId;
   const isPlaceholderActive =
     placeholder &&
     over?.data.current?.sortable?.containerId === placeholderContainerId;
-  if (placeholder && !isPlaceholderActive) {
+  if (
+    (placeholder && isSourceSortable) ||
+    (placeholder && !isPlaceholderActive)
+  ) {
     return null;
   }
 

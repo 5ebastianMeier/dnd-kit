@@ -229,7 +229,7 @@ export function useSortable({
   function getTransition() {
     if (
       // Temporarily disable transitions for a single frame to set up derived transforms
-      (derivedTransform && placeholderIndex === -1) ||
+      derivedTransform ||
       // Or to prevent items jumping to back to their "new" position when items change
       (itemsHaveChanged && previous.current.newIndex === index)
     ) {

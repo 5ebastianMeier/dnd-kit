@@ -57,6 +57,9 @@ export function SortableContext({
   const useDragOverlay = Boolean(dragOverlay.rect !== null);
   const currentPlaceholderId = over?.placeholderId.current;
   const isPlaceholderActive = over?.placeholderContainerId.current === id;
+  const isSourceSortable =
+    over?.placeholderContainerId.current ===
+    active?.data.current?.sortable.containerId;
   // const currentPlaceholderContainerId = over?.placeholderContainerId.current;
   const items = useMemo(() => {
     const userDefinedIds = userDefinedItems.map((item) =>
@@ -70,11 +73,16 @@ export function SortableContext({
     // ) {
     //   return [...userDefinedIds, currentPlaceholderId];
     // }
-    if (isPlaceholderActive && currentPlaceholderId) {
+    if (!isSourceSortable && isPlaceholderActive && currentPlaceholderId) {
       return [...userDefinedIds, currentPlaceholderId];
     }
     return userDefinedIds;
-  }, [currentPlaceholderId, isPlaceholderActive, userDefinedItems]);
+  }, [
+    currentPlaceholderId,
+    isPlaceholderActive,
+    isSourceSortable,
+    userDefinedItems,
+  ]);
   // const sortingId = currentPlaceholderId ?? active?.id ?? '';
   const activeIndex = active ? items.indexOf(active.id) : -1;
   const overIndex = over ? items.indexOf(over.id) : -1;
@@ -97,7 +105,9 @@ export function SortableContext({
   const previousItemsRef = useRef(items);
   const itemsHaveChanged = !isEqual(items, previousItemsRef.current);
   const disableTransforms =
-    (overIndex !== -1 && activeIndex === -1 && placeholderIndex === -1) ||
+    (overIndex !== -1 &&
+      activeIndex === -1 &&
+      (placeholderIndex === -1 || isSourceSortable)) ||
     itemsHaveChanged;
 
   useIsomorphicLayoutEffect(() => {
