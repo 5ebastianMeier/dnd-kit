@@ -105,10 +105,11 @@ export function SortableContext({
   const previousItemsRef = useRef(items);
   const itemsHaveChanged = !isEqual(items, previousItemsRef.current);
   const disableTransforms =
-    (overIndex !== -1 &&
-      activeIndex === -1 &&
-      (placeholderIndex === -1 || isSourceSortable)) ||
+    (overIndex !== -1 && activeIndex === -1 && placeholderIndex === -1) ||
     itemsHaveChanged;
+  // (overIndex !== -1 &&
+  //   activeIndex === -1 &&
+  //   (placeholderIndex === -1 || isSourceSortable)) ||
 
   useIsomorphicLayoutEffect(() => {
     if (itemsHaveChanged && !measuringScheduled) {
@@ -131,7 +132,8 @@ export function SortableContext({
 
   const contextValue = useMemo(
     (): ContextDescriptor => ({
-      activeIndex: isPlaceholderActive ? placeholderIndex : activeIndex,
+      // activeIndex: isPlaceholderActive ? placeholderIndex : activeIndex,
+      activeIndex,
       placeholderIndex,
       containerId,
       disableTransforms,
@@ -144,7 +146,7 @@ export function SortableContext({
       strategy,
     }),
     [
-      isPlaceholderActive,
+      // isPlaceholderActive,
       activeIndex,
       placeholderIndex,
       containerId,
