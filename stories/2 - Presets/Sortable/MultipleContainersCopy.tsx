@@ -27,6 +27,7 @@ import {
   useSensor,
   MeasuringStrategy,
   KeyboardCoordinateGetter,
+  useDndContext,
 } from '@dnd-kit/core';
 import {
   AnimateLayoutChanges,
@@ -577,19 +578,23 @@ export function MultipleContainersCopy({
   );
 
   function renderSortableItemDragOverlay(id: string) {
+    const dragOverlayStyle = {
+      ...getItemStyles({
+        containerId: findContainer(id) as string,
+        overIndex: -1,
+        index: getIndex(id),
+        value: id,
+        isSorting: true,
+        isDragging: true,
+        isDragOverlay: true,
+      }),
+      height: 200,
+    };
     return (
       <Item
         value={id}
         handle={handle}
-        style={getItemStyles({
-          containerId: findContainer(id) as string,
-          overIndex: -1,
-          index: getIndex(id),
-          value: id,
-          isSorting: true,
-          isDragging: true,
-          isDragOverlay: true,
-        })}
+        style={dragOverlayStyle}
         color={getColor(id)}
         wrapperStyle={wrapperStyle({index: 0})}
         renderItem={renderItem}
@@ -677,15 +682,20 @@ function PlaceholderItem({
   style: placeholderStyleProp,
   ...props
 }: SortableItemProps) {
-  const placeholderStyle = (): CSSProperties => {
+  const {dragOverlay} = useDndContext();
+  const dragOverlayHeight = dragOverlay.rect?.height;
+  console.log('dragoverlayheight', dragOverlayHeight);
+  const placeholderStyle = useCallback((): CSSProperties => {
     // ...placeholderStyleProp,
     if (props.containerId !== 'B') {
       return {};
     }
     return {
-      height: 100,
+      height: dragOverlayHeight ?? 80,
+      // height: 100,
     };
-  };
+  }, [dragOverlayHeight, props.containerId]);
+
   return <SortableItem placeholder style={placeholderStyle} {...props} />;
 }
 
