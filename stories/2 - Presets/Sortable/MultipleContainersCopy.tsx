@@ -1,4 +1,10 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {
+  CSSProperties,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {createPortal, unstable_batchedUpdates} from 'react-dom';
 import {
   CancelDrop,
@@ -667,8 +673,20 @@ function getColor(id: string) {
   return undefined;
 }
 
-function PlaceholderItem(props: SortableItemProps) {
-  return <SortableItem placeholder {...props} />;
+function PlaceholderItem({
+  style: placeholderStyleProp,
+  ...props
+}: SortableItemProps) {
+  const placeholderStyle = (): CSSProperties => {
+    // ...placeholderStyleProp,
+    if (props.containerId !== 'B') {
+      return {};
+    }
+    return {
+      height: 100,
+    };
+  };
+  return <SortableItem placeholder style={placeholderStyle} {...props} />;
 }
 
 function Trash({id}: {id: UniqueIdentifier}) {
