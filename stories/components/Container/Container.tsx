@@ -19,6 +19,7 @@ export interface Props {
   unstyled?: boolean;
   onClick?(): void;
   onRemove?(): void;
+  placeholderId?: UniqueIdentifier;
 }
 
 export const Container = forwardRef<HTMLDivElement, Props>(

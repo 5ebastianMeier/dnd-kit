@@ -62,7 +62,8 @@ export function SortableContext({
       ? [...userDefinedIds, currentPlaceholderId]
       : userDefinedIds;
   }, [currentPlaceholderId, userDefinedItems]);
-  const activeIndex = active ? items.indexOf(active.id) : -1;
+  const sortingId = currentPlaceholderId ?? active?.id ?? '';
+  const activeIndex = active ? items.indexOf(sortingId) : -1;
   const overIndex = over ? items.indexOf(over.id) : -1;
   const previousItemsRef = useRef(items);
   const itemsHaveChanged = !isEqual(items, previousItemsRef.current);

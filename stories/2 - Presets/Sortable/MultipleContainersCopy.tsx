@@ -53,6 +53,7 @@ function DroppableContainer({
   id,
   items,
   style,
+  placeholderId,
   ...props
 }: ContainerProps & {
   disabled?: boolean;
@@ -76,6 +77,7 @@ function DroppableContainer({
       children: items,
     },
     animateLayoutChanges,
+    placeholderDraggableId: placeholderId,
   });
   const isOverContainer = over
     ? (id === over.id && active?.data.current?.type !== 'container') ||
@@ -468,6 +470,7 @@ export function MultipleContainersCopy({
               style={containerStyle}
               unstyled={minimal}
               onRemove={() => handleRemove(containerId)}
+              placeholderId={placeholderId}
             >
               <SortableContext
                 id={`sortable-${containerId}`}
@@ -477,6 +480,8 @@ export function MultipleContainersCopy({
                 {items[containerId].map((value, index) => {
                   return (
                     <SortableItem
+                      placeholderId={placeholderId}
+                      placeholderContainerId={`sortable-${containerId}`}
                       disabled={isSortingContainer}
                       key={value}
                       id={value}
@@ -493,6 +498,7 @@ export function MultipleContainersCopy({
                 {placeholder && (
                   <PlaceholderItem
                     id={placeholderId}
+                    placeholderId={placeholderId}
                     placeholderContainerId={`sortable-${containerId}`}
                     disabled={isSortingContainer}
                     key={placeholderId}
@@ -685,6 +691,7 @@ interface SortableItemProps {
   renderItem(): React.ReactElement;
   wrapperStyle({index}: {index: number}): React.CSSProperties;
   placeholder?: boolean;
+  placeholderId?: string;
   placeholderContainerId?: string;
 }
 
@@ -699,6 +706,7 @@ function SortableItem({
   getIndex,
   wrapperStyle,
   placeholder = false,
+  placeholderId,
   placeholderContainerId,
 }: SortableItemProps) {
   const {
@@ -713,6 +721,7 @@ function SortableItem({
   } = useSortable({
     id,
     placeholder,
+    placeholderId,
     placeholderContainerId,
   });
   const mounted = useMountStatus();

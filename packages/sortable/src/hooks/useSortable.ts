@@ -4,6 +4,7 @@ import {
   useDroppable,
   UseDraggableArguments,
   UseDroppableArguments,
+  UniqueIdentifier,
 } from '@dnd-kit/core';
 import {CSS, isKeyboardEvent, useCombinedRefs} from '@dnd-kit/utilities';
 
@@ -34,6 +35,7 @@ export interface Arguments
   transition?: SortableTransition | null;
   placeholder?: boolean;
   placeholderContainerId?: string;
+  placeholderId?: UniqueIdentifier;
 }
 
 export function useSortable({
@@ -48,6 +50,7 @@ export function useSortable({
   transition = defaultTransition,
   placeholder = false,
   placeholderContainerId,
+  placeholderId,
 }: Arguments) {
   const {
     items,
@@ -75,6 +78,7 @@ export function useSortable({
       updateMeasurementsFor: itemsAfterCurrentSortable,
       ...resizeObserverConfig,
     },
+    placeholderDraggableId: placeholderId,
   });
   const {
     active,
