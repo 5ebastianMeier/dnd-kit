@@ -325,7 +325,10 @@ export function MultipleContainersCopy({
           return;
         }
 
-        const overContainer = findContainer(overId);
+        const overContainerId: string =
+          over?.data.current?.sortable?.containerId;
+        const overContainer =
+          findContainer(overId) ?? overContainerId.replace('sortable-', '');
         const activeContainer = findContainer(active.id);
 
         if (!overContainer || !activeContainer) {
@@ -421,21 +424,21 @@ export function MultipleContainersCopy({
           return;
         }
 
-        if (overContainer) {
-          const activeIndex = items[activeContainer].indexOf(active.id);
-          const overIndex = items[overContainer].indexOf(overId);
+        // if (overContainer) {
+        //   const activeIndex = items[activeContainer].indexOf(active.id);
+        //   const overIndex = items[overContainer].indexOf(overId);
 
-          if (activeIndex !== overIndex) {
-            setItems((items) => ({
-              ...items,
-              [overContainer]: arrayMove(
-                items[overContainer],
-                activeIndex,
-                overIndex
-              ),
-            }));
-          }
-        }
+        //   if (activeIndex !== overIndex) {
+        //     setItems((items) => ({
+        //       ...items,
+        //       [overContainer]: arrayMove(
+        //         items[overContainer],
+        //         activeIndex,
+        //         overIndex
+        //       ),
+        //     }));
+        //   }
+        // }
 
         setActiveId(null);
       }}
