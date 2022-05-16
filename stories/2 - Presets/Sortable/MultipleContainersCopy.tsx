@@ -713,6 +713,7 @@ function SortableItem({
   placeholderId,
   placeholderContainerId,
 }: SortableItemProps) {
+  console.log('render SortableItem', id);
   const {
     setNodeRef,
     listeners,
@@ -728,6 +729,7 @@ function SortableItem({
     placeholderId,
     placeholderContainerId,
   });
+  console.log('render SortableItem', id, transform, transition);
   const mounted = useMountStatus();
   const mountedWhileDragging = isDragging && !mounted;
 

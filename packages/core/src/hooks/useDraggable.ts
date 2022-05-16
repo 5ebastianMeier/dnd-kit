@@ -61,10 +61,13 @@ export function useDraggable({
   } = useContext(InternalContext);
   const {role = defaultRole, roleDescription = 'draggable', tabIndex = 0} =
     attributes ?? {};
+
+  // const isActivePlaceholder = over?.placeholderContainerId === placeholderContainerId
   // const isDragging = active?.id === id;
   const isDragging = placeholder
-    ? over?.id === placeholderContainerId
+    ? over?.placeholderContainerId.current === placeholderContainerId
     : active?.id === id;
+  // ? over?.id === placeholderContainerId
   const transform: Transform | null = useContext(
     isDragging ? ActiveDraggableContext : NullContext
   );

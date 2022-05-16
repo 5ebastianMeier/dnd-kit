@@ -56,7 +56,7 @@ export function SortableContext({
   const containerId = useUniqueId(ID_PREFIX, id);
   const useDragOverlay = Boolean(dragOverlay.rect !== null);
   const currentPlaceholderId = over?.placeholderId.current;
-  // const isPlaceholderActive = over?.placeholderContainerId.current ===
+  const isPlaceholderActive = over?.placeholderContainerId.current === id;
   // const currentPlaceholderContainerId = over?.placeholderContainerId.current;
   const items = useMemo(() => {
     const userDefinedIds = userDefinedItems.map((item) =>
@@ -70,11 +70,11 @@ export function SortableContext({
     // ) {
     //   return [...userDefinedIds, currentPlaceholderId];
     // }
-    if (currentPlaceholderId) {
+    if (isPlaceholderActive && currentPlaceholderId) {
       return [...userDefinedIds, currentPlaceholderId];
     }
     return userDefinedIds;
-  }, [currentPlaceholderId, userDefinedItems]);
+  }, [currentPlaceholderId, isPlaceholderActive, userDefinedItems]);
   // const sortingId = currentPlaceholderId ?? active?.id ?? '';
   const activeIndex = active ? items.indexOf(active.id) : -1;
   const overIndex = over ? items.indexOf(over.id) : -1;
@@ -97,7 +97,8 @@ export function SortableContext({
   const previousItemsRef = useRef(items);
   const itemsHaveChanged = !isEqual(items, previousItemsRef.current);
   const disableTransforms =
-    (overIndex !== -1 && activeIndex === -1) || itemsHaveChanged;
+    (overIndex !== -1 && activeIndex === -1 && placeholderIndex === -1) ||
+    itemsHaveChanged;
 
   useIsomorphicLayoutEffect(() => {
     if (itemsHaveChanged && !measuringScheduled) {
@@ -110,9 +111,17 @@ export function SortableContext({
     previousItemsRef.current = items;
   }, [items]);
 
+  console.log('SortableContext', id, {
+    activeIndex,
+    overIndex,
+    placeholderIndex,
+    items,
+    containerId,
+  });
+
   const contextValue = useMemo(
     (): ContextDescriptor => ({
-      activeIndex,
+      activeIndex: isPlaceholderActive ? placeholderIndex : activeIndex,
       placeholderIndex,
       containerId,
       disableTransforms,
@@ -125,6 +134,7 @@ export function SortableContext({
       strategy,
     }),
     [
+      isPlaceholderActive,
       activeIndex,
       placeholderIndex,
       containerId,

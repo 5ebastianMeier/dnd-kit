@@ -157,14 +157,25 @@ export function useSortable({
     transition,
     wasDragging: previous.current.activeId != null,
   });
+  const isSortablePlaceholderActive =
+    over?.placeholderContainerId.current === placeholderContainerId;
   const derivedTransform = useDerivedTransform({
     disabled: !shouldAnimateLayoutChanges,
-    index,
+    index: isSortablePlaceholderActive ? newIndex : index,
     node,
     rect,
   });
 
   useEffect(() => {
+    // console.log(
+    //   'useSortable',
+    //   shouldAnimateLayoutChanges,
+    //   previous.current,
+    //   isSorting,
+    //   containerId,
+    //   items,
+    //   activeId
+    // );
     if (isSorting && previous.current.newIndex !== newIndex) {
       previous.current.newIndex = newIndex;
     }
@@ -180,11 +191,18 @@ export function useSortable({
     if (activeId !== previous.current.activeId) {
       previous.current.activeId = activeId;
     }
-  }, [activeId, isSorting, newIndex, containerId, items]);
+  }, [
+    activeId,
+    isSorting,
+    newIndex,
+    containerId,
+    items,
+    shouldAnimateLayoutChanges,
+  ]);
 
   return {
     active,
-    activeIndexUsed,
+    activeIndex: activeIndexUsed,
     attributes,
     rect,
     index,
@@ -200,14 +218,18 @@ export function useSortable({
     setNodeRef,
     setDroppableNodeRef,
     setDraggableNodeRef,
-    transform: derivedTransform ?? finalTransform,
+    transform:
+      placeholderIndex !== -1
+        ? finalTransform
+        : derivedTransform ?? finalTransform,
+    // transform: derivedTransform ?? finalTransform,
     transition: getTransition(),
   };
 
   function getTransition() {
     if (
       // Temporarily disable transitions for a single frame to set up derived transforms
-      derivedTransform ||
+      (derivedTransform && placeholderIndex === -1) ||
       // Or to prevent items jumping to back to their "new" position when items change
       (itemsHaveChanged && previous.current.newIndex === index)
     ) {
