@@ -17,6 +17,7 @@ const ID_PREFIX = 'Sortable';
 
 interface ContextDescriptor {
   activeIndex: number;
+  placeholderIndex: number;
   containerId: string;
   disableTransforms: boolean;
   items: UniqueIdentifier[];
@@ -28,6 +29,7 @@ interface ContextDescriptor {
 
 export const Context = React.createContext<ContextDescriptor>({
   activeIndex: -1,
+  placeholderIndex: -1,
   containerId: ID_PREFIX,
   disableTransforms: false,
   items: [],
@@ -58,13 +60,30 @@ export function SortableContext({
     const userDefinedIds = userDefinedItems.map((item) =>
       typeof item === 'string' ? item : item.id
     );
-    return currentPlaceholderId
-      ? [...userDefinedIds, currentPlaceholderId]
-      : userDefinedIds;
+    if (!currentPlaceholderId) {
+      return userDefinedIds;
+    }
+    return [...userDefinedIds, currentPlaceholderId];
   }, [currentPlaceholderId, userDefinedItems]);
-  const sortingId = currentPlaceholderId ?? active?.id ?? '';
-  const activeIndex = active ? items.indexOf(sortingId) : -1;
+  // const sortingId = currentPlaceholderId ?? active?.id ?? '';
+  const activeIndex = active ? items.indexOf(active.id) : -1;
   const overIndex = over ? items.indexOf(over.id) : -1;
+  // const itemsIncludingPlaceholder = useMemo(() => {
+  //   if (!currentPlaceholderId) {
+  //     return items;
+  //   }
+  //   return [...items, currentPlaceholderId];
+  //   // return [
+  //   //   ...items.slice(0, overIndex),
+  //   //   currentPlaceholderId,
+  //   //   ...items.slice(overIndex, items.length),
+  //   // ];
+  // }, [currentPlaceholderId, items]);
+  const placeholderIndex = currentPlaceholderId
+    ? items.indexOf(currentPlaceholderId)
+    : -1;
+
+  console.log('placeholder', currentPlaceholderId, placeholderIndex);
   const previousItemsRef = useRef(items);
   const itemsHaveChanged = !isEqual(items, previousItemsRef.current);
   const disableTransforms =
@@ -73,6 +92,7 @@ export function SortableContext({
   useIsomorphicLayoutEffect(() => {
     if (itemsHaveChanged && !measuringScheduled) {
       measureDroppableContainers(items);
+      // measureDroppableContainers(itemsIncludingPlaceholder);
     }
   }, [itemsHaveChanged, items, measureDroppableContainers, measuringScheduled]);
 
@@ -83,16 +103,20 @@ export function SortableContext({
   const contextValue = useMemo(
     (): ContextDescriptor => ({
       activeIndex,
+      placeholderIndex,
       containerId,
       disableTransforms,
-      items,
+      items: items,
+      // items: itemsIncludingPlaceholder,
       overIndex,
       useDragOverlay,
       sortedRects: getSortedRects(items, droppableRects),
+      // sortedRects: getSortedRects(itemsIncludingPlaceholder, droppableRects),
       strategy,
     }),
     [
       activeIndex,
+      placeholderIndex,
       containerId,
       disableTransforms,
       items,

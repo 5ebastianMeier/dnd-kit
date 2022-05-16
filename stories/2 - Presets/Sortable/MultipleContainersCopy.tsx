@@ -459,33 +459,52 @@ export function MultipleContainersCopy({
               : horizontalListSortingStrategy
           }
         >
-          {containers.map((containerId) => (
-            <DroppableContainer
-              key={containerId}
-              id={containerId}
-              label={minimal ? undefined : `Column ${containerId}`}
-              columns={columns}
-              items={items[containerId]}
-              scrollable={scrollable}
-              style={containerStyle}
-              unstyled={minimal}
-              onRemove={() => handleRemove(containerId)}
-              placeholderId={placeholderId}
-            >
-              <SortableContext
-                id={`sortable-${containerId}`}
+          {containers.map((containerId) => {
+            const containerPlaceholderId = `${containerId}-${placeholderId}`;
+            return (
+              <DroppableContainer
+                key={containerId}
+                id={containerId}
+                label={minimal ? undefined : `Column ${containerId}`}
+                columns={columns}
                 items={items[containerId]}
-                strategy={strategy}
+                scrollable={scrollable}
+                style={containerStyle}
+                unstyled={minimal}
+                onRemove={() => handleRemove(containerId)}
+                placeholderId={containerPlaceholderId}
               >
-                {items[containerId].map((value, index) => {
-                  return (
-                    <SortableItem
-                      placeholderId={placeholderId}
+                <SortableContext
+                  id={`sortable-${containerId}`}
+                  items={items[containerId]}
+                  strategy={strategy}
+                >
+                  {items[containerId].map((value, index) => {
+                    return (
+                      <SortableItem
+                        placeholderId={containerPlaceholderId}
+                        placeholderContainerId={`sortable-${containerId}`}
+                        disabled={isSortingContainer}
+                        key={value}
+                        id={value}
+                        index={index}
+                        handle={handle}
+                        style={getItemStyles}
+                        wrapperStyle={wrapperStyle}
+                        renderItem={renderItem}
+                        containerId={containerId}
+                        getIndex={getIndex}
+                      />
+                    );
+                  })}
+                  {placeholder && (
+                    <PlaceholderItem
+                      id={containerPlaceholderId}
+                      placeholderId={containerPlaceholderId}
                       placeholderContainerId={`sortable-${containerId}`}
                       disabled={isSortingContainer}
-                      key={value}
-                      id={value}
-                      index={index}
+                      key={containerPlaceholderId}
+                      index={items[containerId].length}
                       handle={handle}
                       style={getItemStyles}
                       wrapperStyle={wrapperStyle}
@@ -493,25 +512,8 @@ export function MultipleContainersCopy({
                       containerId={containerId}
                       getIndex={getIndex}
                     />
-                  );
-                })}
-                {placeholder && (
-                  <PlaceholderItem
-                    id={placeholderId}
-                    placeholderId={placeholderId}
-                    placeholderContainerId={`sortable-${containerId}`}
-                    disabled={isSortingContainer}
-                    key={placeholderId}
-                    index={items[containerId].length}
-                    handle={handle}
-                    style={getItemStyles}
-                    wrapperStyle={wrapperStyle}
-                    renderItem={renderItem}
-                    containerId={containerId}
-                    getIndex={getIndex}
-                  />
-                )}
-                {/* <div
+                  )}
+                  {/* <div
                   ref={setNodeRef}
                   {...attributes}
                   style={{
@@ -519,9 +521,10 @@ export function MultipleContainersCopy({
                     // transition: transition,
                   }}
                 /> */}
-              </SortableContext>
-            </DroppableContainer>
-          ))}
+                </SortableContext>
+              </DroppableContainer>
+            );
+          })}
           {minimal ? undefined : (
             <DroppableContainer
               id={PLACEHOLDER_ID}

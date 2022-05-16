@@ -56,6 +56,7 @@ export function useSortable({
     items,
     containerId,
     activeIndex,
+    placeholderIndex,
     disableTransforms,
     sortedRects,
     overIndex,
@@ -67,6 +68,7 @@ export function useSortable({
     () => ({sortable: {containerId, index, items}, ...customData}),
     [containerId, customData, index, items]
   );
+  console.log('placeholderIndex', placeholderIndex);
   const itemsAfterCurrentSortable = useMemo(
     () => items.slice(items.indexOf(id)),
     [items, id]
@@ -103,10 +105,12 @@ export function useSortable({
   });
   const setNodeRef = useCombinedRefs(setDroppableNodeRef, setDraggableNodeRef);
   const isSorting = Boolean(active);
+  // const activeIndexUsed = activeIndex;
+  const activeIndexUsed = activeIndex === -1 ? placeholderIndex : activeIndex;
   const displaceItem =
     isSorting &&
     !disableTransforms &&
-    isValidIndex(activeIndex) &&
+    isValidIndex(activeIndexUsed) &&
     isValidIndex(overIndex);
   const shouldDisplaceDragSource = !useDragOverlay && isDragging;
   const dragSourceDisplacement =
@@ -117,16 +121,19 @@ export function useSortable({
       strategy({
         rects: sortedRects,
         activeNodeRect,
-        activeIndex,
+        activeIndex: activeIndexUsed,
         overIndex,
         index,
       })
     : null;
   const newIndex =
-    isValidIndex(activeIndex) && isValidIndex(overIndex)
-      ? getNewIndex({id, items, activeIndex, overIndex})
+    isValidIndex(activeIndexUsed) && isValidIndex(overIndex)
+      ? getNewIndex({id, items, activeIndex: activeIndexUsed, overIndex})
       : index;
-  const activeId = active?.id;
+  // const currentPlaceholderId = over?.placeholderId.current;
+  const activeId = placeholder ? placeholderId : active?.id;
+  // const activeId = active?.id;
+  // const sortingId = currentPlaceholderId ?? activeId ?? '';
   const previous = useRef({
     activeId,
     items,
@@ -175,7 +182,7 @@ export function useSortable({
 
   return {
     active,
-    activeIndex,
+    activeIndexUsed,
     attributes,
     rect,
     index,
