@@ -84,12 +84,16 @@ function DroppableContainer({
       children: items,
     },
     animateLayoutChanges,
-    placeholderDraggableId: placeholderId,
+    // placeholderDraggableId: placeholderId,
   });
-  const isOverContainer = over
-    ? (id === over.id && active?.data.current?.type !== 'container') ||
-      items.includes(over.id)
-    : false;
+
+  const overContainerId: string = over?.data.current?.sortable?.containerId;
+  const overId = overContainerId?.replace('sortable-', '');
+  const isOverContainer = overId === id;
+  // const isOverContainer = over
+  //   ? (id === over.id && active?.data.current?.type !== 'container') ||
+  //     items.includes(over.id)
+  //   : false;
 
   return (
     <Container
@@ -324,7 +328,7 @@ export function MultipleContainersCopy({
         setActiveId(active.id);
         setClonedItems(items);
       }}
-      onDragOver={({active, over}) => {}}
+      // onDragOver={({active, over}) => {}}
       onDragEnd={({active, over}) => {
         const overId = over?.id;
 
