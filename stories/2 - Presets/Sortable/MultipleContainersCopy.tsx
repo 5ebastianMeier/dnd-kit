@@ -89,7 +89,7 @@ function DroppableContainer({
 
   const overContainerId: string = over?.data.current?.sortable?.containerId;
   const overId = overContainerId?.replace('sortable-', '');
-  const isOverContainer = overId === id;
+  const isOverContainer = overId === id || over?.id === id;
   // const isOverContainer = over
   //   ? (id === over.id && active?.data.current?.type !== 'container') ||
   //     items.includes(over.id)
@@ -151,6 +151,10 @@ interface Props {
   scrollable?: boolean;
   vertical?: boolean;
   placeholder?: boolean;
+  customDragOverlayHeight?: number;
+  activateCustomDragOverlayHeight?: boolean;
+  trackDragOverlayHeight?: boolean;
+  customPlaceholderPerContainer?: boolean;
 }
 
 export const TRASH_ID = 'void';
@@ -176,6 +180,10 @@ export function MultipleContainersCopy({
   vertical = false,
   scrollable,
   placeholder = false,
+  activateCustomDragOverlayHeight,
+  customDragOverlayHeight,
+  customPlaceholderPerContainer,
+  trackDragOverlayHeight,
 }: Props) {
   const [items, setItems] = useState<Items>(
     () =>
@@ -538,6 +546,7 @@ export function MultipleContainersCopy({
                       renderItem={renderItem}
                       containerId={containerId}
                       getIndex={getIndex}
+                      trackDragOverlayHeight={trackDragOverlayHeight}
                     />
                   )}
                   {/* <div
@@ -592,7 +601,9 @@ export function MultipleContainersCopy({
         isDragging: true,
         isDragOverlay: true,
       }),
-      height: 200,
+      height: activateCustomDragOverlayHeight
+        ? customDragOverlayHeight
+        : undefined,
     };
     return (
       <Item
@@ -684,6 +695,7 @@ function getColor(id: string) {
 
 function PlaceholderItem({
   style: placeholderStyleProp,
+  trackDragOverlayHeight,
   ...props
 }: SortableItemProps) {
   const {dragOverlay} = useDndContext();
@@ -691,14 +703,14 @@ function PlaceholderItem({
   console.log('dragoverlayheight', dragOverlayHeight);
   const placeholderStyle = useCallback((): CSSProperties => {
     // ...placeholderStyleProp,
-    if (props.containerId !== 'B') {
-      return {};
-    }
+    // if (props.containerId !== 'B') {
+    //   return {};
+    // }
     return {
-      height: dragOverlayHeight ?? 80,
+      height: trackDragOverlayHeight ? dragOverlayHeight : undefined,
       // height: 100,
     };
-  }, [dragOverlayHeight, props.containerId]);
+  }, [dragOverlayHeight, trackDragOverlayHeight]);
 
   return <SortableItem placeholder style={placeholderStyle} {...props} />;
 }
@@ -744,6 +756,7 @@ interface SortableItemProps {
   placeholder?: boolean;
   placeholderId?: string;
   placeholderContainerId?: string;
+  trackDragOverlayHeight?: boolean;
 }
 
 function SortableItem({

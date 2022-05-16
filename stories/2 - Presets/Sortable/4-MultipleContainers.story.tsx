@@ -1,11 +1,18 @@
-import React from 'react';
-import type {CancelDrop} from '@dnd-kit/core';
+import React, {useState} from 'react';
+import {
+  CancelDrop,
+  closestCenter,
+  closestCorners,
+  pointerWithin,
+  rectIntersection,
+} from '@dnd-kit/core';
 import {rectSortingStrategy} from '@dnd-kit/sortable';
 
 import {MultipleContainers, TRASH_ID} from './MultipleContainers';
 
 import {ConfirmModal} from '../../components';
 import {MultipleContainersCopy} from './MultipleContainersCopy';
+import CopyWithPlaceholder from './CopyWithPlaceholder';
 // import {CopyWithPlaceholder} from './CopyWithPlaceholder';
 
 export default {
@@ -26,7 +33,88 @@ export const ManyItems = () => (
 
 export const Vertical = () => <MultipleContainers itemCount={5} vertical />;
 
-export const DynamicPlaceholder = () => <MultipleContainersCopy placeholder />;
+export const DynamicPlaceholder = () => {
+  const [customDragOverlayHeight, setCustomDragOverlayHeight] = useState(50);
+  const [
+    activateCustomDragOverlayHeight,
+    setActivateCustomDragOverlayHeight,
+  ] = useState(false);
+  const [trackDragOverlayHeight, setTrackDragOverlayHeight] = useState(false);
+  const [
+    customPlaceholderPerContainer,
+    setCustomPlaceholderPerContainer,
+  ] = useState(false);
+  console.log(
+    'TOGGLES',
+    customDragOverlayHeight,
+    activateCustomDragOverlayHeight,
+    trackDragOverlayHeight,
+    customPlaceholderPerContainer
+  );
+  const props = {
+    customDragOverlayHeight,
+    activateCustomDragOverlayHeight,
+    trackDragOverlayHeight,
+    customPlaceholderPerContainer,
+  };
+  return (
+    <>
+      <MultipleContainersCopy placeholder {...props} />
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 20,
+          left: 20,
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <h3>Toggles</h3>
+        <label>
+          <input
+            type="checkbox"
+            checked={trackDragOverlayHeight}
+            onChange={(event) =>
+              setTrackDragOverlayHeight(event?.target.checked)
+            }
+          />
+          Track DragOverlay height on Placeholder
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={customPlaceholderPerContainer}
+            onChange={(event) =>
+              setCustomPlaceholderPerContainer(event?.target.checked)
+            }
+          />
+          Use fully custom Placeholder per Container
+        </label>
+        <label>
+          <input
+            type="number"
+            value={customDragOverlayHeight}
+            onChange={(event) =>
+              setCustomDragOverlayHeight(parseInt(event.target.value))
+            }
+          />
+          Custom DragOverlay Height
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            value="closestCenter"
+            checked={activateCustomDragOverlayHeight}
+            onChange={(event) =>
+              setActivateCustomDragOverlayHeight(event?.target.checked)
+            }
+          />
+          UseCustom DragOverlay Height
+        </label>
+      </div>
+    </>
+  );
+};
 
 // export const DynamicPlaceholder = () => <CopyWithPlaceholder />;
 
