@@ -5,6 +5,7 @@ import {rectSortingStrategy} from '@dnd-kit/sortable';
 import {MultipleContainers, TRASH_ID} from './MultipleContainers';
 
 import {ConfirmModal} from '../../components';
+import {CopyWithPlaceholder} from './CopyWithPlaceholder';
 
 export default {
   title: 'Presets/Sortable/Multiple Containers',
@@ -23,6 +24,8 @@ export const ManyItems = () => (
 );
 
 export const Vertical = () => <MultipleContainers itemCount={5} vertical />;
+
+export const DynamicPlaceholder = () => <CopyWithPlaceholder />;
 
 export const TrashableItems = ({confirmDrop}: {confirmDrop: boolean}) => {
   const [activeId, setActiveId] = React.useState<string | null>(null);

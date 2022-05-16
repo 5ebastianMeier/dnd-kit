@@ -147,10 +147,11 @@ export const DragOverlay = React.memo(
     const {children: finalChildren, transform: _, ...otherAttributes} =
       derivedAttributes ?? {};
     const prevActiveId = useRef(active?.id ?? null);
+    const activePlaceholderId = useRef(over?.placeholderId ?? null);
     const dropAnimationComplete = useDropAnimation({
       animate: Boolean(dropAnimation && prevActiveId.current && !active),
       adjustScale,
-      activeId: prevActiveId.current,
+      activeId: activePlaceholderId.current ?? prevActiveId.current,
       draggableNodes,
       duration: dropAnimation?.duration,
       easing: dropAnimation?.easing,

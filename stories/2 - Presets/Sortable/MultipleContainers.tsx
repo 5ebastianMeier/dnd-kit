@@ -31,6 +31,7 @@ import {
   verticalListSortingStrategy,
   SortingStrategy,
   horizontalListSortingStrategy,
+  useSortablePlaceholder,
 } from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
 import {coordinateGetter as multipleContainersCoordinateGetter} from './multipleContainersKeyboardCoordinates';
@@ -137,6 +138,7 @@ interface Props {
   trashable?: boolean;
   scrollable?: boolean;
   vertical?: boolean;
+  dynamicPlaceholder?: boolean;
 }
 
 export const TRASH_ID = 'void';
@@ -161,6 +163,7 @@ export function MultipleContainers({
   trashable = false,
   vertical = false,
   scrollable,
+  dynamicPlaceholder = false,
 }: Props) {
   const [items, setItems] = useState<Items>(
     () =>
@@ -291,6 +294,13 @@ export function MultipleContainers({
       recentlyMovedToNewContainer.current = false;
     });
   }, [items]);
+
+  const {
+    attributes,
+    uniqueId,
+    setNodeRef,
+    transform,
+  } = useSortablePlaceholder();
 
   return (
     <DndContext
@@ -447,7 +457,10 @@ export function MultipleContainers({
         }}
       >
         <SortableContext
-          items={[...containers, PLACEHOLDER_ID]}
+          items={[
+            ...containers,
+            dynamicPlaceholder ? uniqueId : PLACEHOLDER_ID,
+          ]}
           strategy={
             vertical
               ? verticalListSortingStrategy
@@ -483,6 +496,14 @@ export function MultipleContainers({
                     />
                   );
                 })}
+                <div
+                  ref={setNodeRef}
+                  {...attributes}
+                  style={{
+                    transform: CSS.Transform.toString(transform),
+                    // transition: transition,
+                  }}
+                />
               </SortableContext>
             </DroppableContainer>
           ))}

@@ -25,6 +25,7 @@ export interface DroppableContainer {
   disabled: boolean;
   node: MutableRefObject<HTMLElement | null>;
   rect: MutableRefObject<ClientRect | null>;
+  placeholderDraggableId: MutableRefObject<UniqueIdentifier | undefined>;
 }
 
 export interface Active {
@@ -41,6 +42,7 @@ export interface Over {
   rect: ClientRect;
   disabled: boolean;
   data: DataRef;
+  placeholderId?: UniqueIdentifier;
 }
 
 export type DraggableNode = {

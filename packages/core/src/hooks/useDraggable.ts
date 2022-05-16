@@ -20,6 +20,8 @@ export interface UseDraggableArguments {
     roleDescription?: string;
     tabIndex?: number;
   };
+  placeholder?: boolean;
+  placeholderContainerId?: string;
 }
 
 export interface DraggableAttributes {
@@ -43,6 +45,8 @@ export function useDraggable({
   data,
   disabled = false,
   attributes,
+  placeholder = false,
+  placeholderContainerId,
 }: UseDraggableArguments) {
   const key = useUniqueId(ID_PREFIX);
   const {
@@ -52,6 +56,7 @@ export function useDraggable({
     activeNodeRect,
     ariaDescribedById,
     draggableNodes,
+    // placeholders,
     over,
   } = useContext(InternalContext);
   const {role = defaultRole, roleDescription = 'draggable', tabIndex = 0} =
@@ -67,17 +72,23 @@ export function useDraggable({
   useIsomorphicLayoutEffect(
     () => {
       draggableNodes[id] = {id, key, node, data: dataRef};
+      // if (placeholder && placeholderContainerId) {
+      //   placeholders[placeholderContainerId] = {id, key, node, data: dataRef};
+      // }
 
       return () => {
         const node = draggableNodes[id];
 
         if (node && node.key === key) {
           delete draggableNodes[id];
+          // if (placeholder && placeholderContainerId) {
+          //   delete placeholders[placeholderContainerId];
+          // }
         }
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [draggableNodes, id]
+    [draggableNodes, id, placeholderContainerId]
   );
 
   const memoizedAttributes: DraggableAttributes = useMemo(
@@ -97,6 +108,7 @@ export function useDraggable({
     activeNodeRect,
     attributes: memoizedAttributes,
     isDragging,
+    isPlaceholderActive: placeholder && over?.id === placeholderContainerId,
     listeners: disabled ? undefined : listeners,
     node,
     over,
