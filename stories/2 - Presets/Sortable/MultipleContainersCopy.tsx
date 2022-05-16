@@ -335,32 +335,33 @@ export function MultipleContainersCopy({
           return;
         }
 
-        if (activeContainer !== overContainer) {
-          setItems((items) => {
-            const activeItems = items[activeContainer];
-            const overItems = items[overContainer];
-            const overIndex = overItems.indexOf(overId);
-            const activeIndex = activeItems.indexOf(active.id);
+        // if (activeContainer !== overContainer) {
+        setItems((items) => {
+          const activeItems = items[activeContainer];
+          const overItems = items[overContainer];
+          const overIndex = overItems.indexOf(overId);
+          const activeIndex = activeItems.indexOf(active.id);
 
-            let newIndex: number;
+          let newIndex: number;
 
-            if (overId in items) {
-              newIndex = overItems.length + 1;
-            } else {
-              const isBelowOverItem =
-                over &&
-                active.rect.current.translated &&
-                active.rect.current.translated.top >
-                  over.rect.top + over.rect.height;
+          if (overId in items) {
+            newIndex = overItems.length + 1;
+          } else {
+            const isBelowOverItem =
+              over &&
+              active.rect.current.translated &&
+              active.rect.current.translated.top >
+                over.rect.top + over.rect.height;
 
-              const modifier = isBelowOverItem ? 1 : 0;
+            const modifier = isBelowOverItem ? 1 : 0;
 
-              newIndex =
-                overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
-            }
+            newIndex =
+              overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
+          }
 
-            recentlyMovedToNewContainer.current = true;
+          recentlyMovedToNewContainer.current = true;
 
+          if (activeContainer !== overContainer) {
             return {
               ...items,
               [activeContainer]: items[activeContainer].filter(
@@ -375,8 +376,19 @@ export function MultipleContainersCopy({
                 ),
               ],
             };
-          });
-        }
+          } else {
+            return {
+              ...items,
+              [overContainer]: arrayMove(
+                items[overContainer],
+                activeIndex,
+                newIndex
+              ),
+            };
+          }
+        });
+        // }
+
         if (active.id in items && over?.id) {
           setContainers((containers) => {
             const activeIndex = containers.indexOf(active.id);
