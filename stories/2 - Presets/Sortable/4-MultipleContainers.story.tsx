@@ -35,6 +35,7 @@ export const Vertical = () => <MultipleContainers itemCount={5} vertical />;
 
 export const DynamicPlaceholder = () => {
   const [customDragOverlayHeight, setCustomDragOverlayHeight] = useState(50);
+  const [activatePlaceholder, setActivatePlaceholder] = useState(true);
   const [
     activateCustomDragOverlayHeight,
     setActivateCustomDragOverlayHeight,
@@ -46,12 +47,14 @@ export const DynamicPlaceholder = () => {
   ] = useState(false);
   console.log(
     'TOGGLES',
+    activatePlaceholder,
     customDragOverlayHeight,
     activateCustomDragOverlayHeight,
     trackDragOverlayHeight,
     customPlaceholderPerContainer
   );
   const props = {
+    placeholder: activatePlaceholder,
     customDragOverlayHeight,
     activateCustomDragOverlayHeight,
     trackDragOverlayHeight,
@@ -59,7 +62,7 @@ export const DynamicPlaceholder = () => {
   };
   return (
     <>
-      <MultipleContainersCopy placeholder {...props} />
+      <MultipleContainersCopy {...props} />
       <div
         style={{
           position: 'absolute',
@@ -70,6 +73,14 @@ export const DynamicPlaceholder = () => {
         }}
       >
         <h3>Toggles</h3>
+        <label>
+          <input
+            type="checkbox"
+            checked={activatePlaceholder}
+            onChange={(event) => setActivatePlaceholder(event?.target.checked)}
+          />
+          Activate Placeholder
+        </label>
         <label>
           <input
             type="checkbox"

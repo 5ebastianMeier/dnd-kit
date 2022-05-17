@@ -700,7 +700,11 @@ function PlaceholderItem({
 }: SortableItemProps) {
   const {dragOverlay} = useDndContext();
   const dragOverlayHeight = dragOverlay.rect?.height;
-  console.log('dragoverlayheight', dragOverlayHeight);
+  console.log(
+    'placeholderItem',
+    props.placeholderContainerId,
+    props.placeholderId
+  );
   const placeholderStyle = useCallback((): CSSProperties => {
     // ...placeholderStyleProp,
     // if (props.containerId !== 'B') {

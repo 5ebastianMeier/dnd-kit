@@ -52,11 +52,15 @@ export function SortableContext({
     over,
     measureDroppableContainers,
     measuringScheduled,
+    droppableContainers,
   } = useDndContext();
   const containerId = useUniqueId(ID_PREFIX, id);
   const useDragOverlay = Boolean(dragOverlay.rect !== null);
   const currentPlaceholderId = over?.placeholderId.current;
-  const isPlaceholderActive = over?.placeholderContainerId.current === id;
+  const overId = `${id}`.replace('sortable-', '');
+  console.log('droppableContainers', droppableContainers);
+  const isPlaceholderActive =
+    over?.placeholderContainerId.current === id || over?.id === overId;
   const isSourceSortable =
     over?.placeholderContainerId.current ===
     active?.data.current?.sortable.containerId;
